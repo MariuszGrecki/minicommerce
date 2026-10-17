@@ -1,0 +1,26 @@
+services: 
+  postgres:
+    image: postgres:17
+    container_name: minicommerce_postgres
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: devpassword
+    ports:
+      - "53456:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ./services/order-service:/app
+    command: ["tail", "-f", "/dev/null"]
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
