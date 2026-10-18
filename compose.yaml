@@ -15,6 +15,9 @@ services:
     build:
       context: ./services/order-service
       dockerfile: Dockerfile
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp   
     working_dir: /app
     volumes:
       - ./services/order-service:/app
