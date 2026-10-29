@@ -23,7 +23,8 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'customer_id' => ['required', 'integer', 'min:1']
+           'customer_id' => ['required', 'integer', 'min:1'],
+           'total_amount' => ['required', 'numeric', 'min:0.01', 'decimal:0,2'],
         ];
     }
 }
