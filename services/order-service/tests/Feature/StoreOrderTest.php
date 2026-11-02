@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StoreOrderTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_uses_test_database(): void
     {
         $database = \Illuminate\Support\Facades\DB::selectOne(
@@ -24,5 +27,20 @@ class StoreOrderTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['total_amount']);
+    }
+
+    public function test_it_creates_order(): void
+    {
+        $response = $this->postJson('/api/orders', [
+            'customer_id' => 15,
+            'total_amount' => 199.99,
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('orders', [
+            'customer_id' => 15,
+            'total_amount' => '199.99'
+        ]);
     }
 }
