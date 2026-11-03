@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 
 class StoreOrderTest extends TestCase
 {
@@ -33,7 +34,7 @@ class StoreOrderTest extends TestCase
     {
         $response = $this->postJson('/api/orders', [
             'customer_id' => 15,
-            'total_amount' => 199.99,
+            'total_amount' => '199.99',
         ]);
 
         $response->assertStatus(201);
@@ -42,5 +43,10 @@ class StoreOrderTest extends TestCase
             'customer_id' => 15,
             'total_amount' => '199.99'
         ]);
+
+        $response->assertJsonPath('status', 'pending');
+        $response->assertJsonStructure(['id', 'status']);
+        $id = $response->json('id');
+        $this->assertTrue(Str::isUuid($id, 7));
     }
 }
