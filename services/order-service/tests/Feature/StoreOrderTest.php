@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use App\Models\Order;
 
 class StoreOrderTest extends TestCase
 {
@@ -21,6 +22,8 @@ class StoreOrderTest extends TestCase
 
     public function test_it_rejects_negative_order_amount(): void
     {
+        $count = Order::count();
+
         $response = $this->postJson('/api/orders', [
             'customer_id' => 15,
             'total_amount' => -100.50,
@@ -28,6 +31,8 @@ class StoreOrderTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['total_amount']);
+
+        $this->assertDatabaseCount('orders', $count);
     }
 
     public function test_it_creates_order(): void
