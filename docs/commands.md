@@ -6,7 +6,7 @@ docker compose exec order-service php artisan route:list
 
 
 docker compose exec order-service php artisan make:test StoreOrderTest
-
+docker compose exec order-service php artisan make:event OrderCreated
 
 docker compose exec order-service php artisan install:api
 
