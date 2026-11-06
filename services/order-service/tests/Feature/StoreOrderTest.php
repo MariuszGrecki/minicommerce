@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use App\Models\Order;
+use App\Events\OrderCreated;
+use Illuminate\Support\Facades\Event;
 
 class StoreOrderTest extends TestCase
 {
@@ -37,6 +39,7 @@ class StoreOrderTest extends TestCase
 
     public function test_it_creates_order(): void
     {
+        Event::fake([OrderCreated::class]);
         $response = $this->postJson('/api/orders', [
             'customer_id' => 15,
             'total_amount' => '199.99',
@@ -53,5 +56,6 @@ class StoreOrderTest extends TestCase
         $response->assertJsonStructure(['id', 'status']);
         $id = $response->json('id');
         $this->assertTrue(Str::isUuid($id, 7));
+        Event::assertDispatched(OrderCreated::class);
     }
 }
