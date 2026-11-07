@@ -9,6 +9,10 @@ RUN apt-get update \
         libicu-dev\
         unzip \
     && docker-php-ext-install pdo_pgsql zip intl \
-    && rm -rf /var/lib/apt/lists/*
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && rm -rf /var/lib/apt/lists/* /tmp/pear
+
+COPY docker/xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

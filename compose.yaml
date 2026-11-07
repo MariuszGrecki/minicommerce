@@ -18,6 +18,8 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     environment:
       HOME: /tmp   
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     working_dir: /app
     volumes:
       - ./services/order-service:/app
