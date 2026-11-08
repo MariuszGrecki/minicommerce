@@ -3,7 +3,7 @@ import urllib.request
 
 payload = {
     "customer_id": 15,
-    "total_amount": "199.99",
+    "total_amount": "-199.99",
 }
 
 url = "http://127.0.0.1:33377/api/orders"
@@ -21,7 +21,16 @@ request = urllib.request.Request(
     method="POST",
 )
 
-with urllib.request.urlopen(request, timeout=100) as response:
-    print("HTTP:", response.status)
-    print(response.read().decode("utf-8"))
+try:
+    with urllib.request.urlopen(request, timeout=5) as response:
+        print("HTTP:", response.status)
+        print(response.read().decode("utf-8"))
+
+except urllib.error.HTTPError as error:
+    print("Błąd HTTP", error.code)
+    text = error.read().decode("utf-8")
+    data = json.loads(text)
+
+    print(data['message'])
+
 
