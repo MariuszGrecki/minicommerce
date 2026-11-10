@@ -3,7 +3,7 @@ import urllib.request
 
 payload = {
     "customer_id": 15,
-    "total_amount": "-199.99",
+    "total_amount": "199.99",
 }
 
 url = "http://127.0.0.1:33377/api/orders"

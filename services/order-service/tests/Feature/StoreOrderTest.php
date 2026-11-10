@@ -56,6 +56,11 @@ class StoreOrderTest extends TestCase
         $response->assertJsonStructure(['id', 'status']);
         $id = $response->json('id');
         $this->assertTrue(Str::isUuid($id, 7));
-        Event::assertDispatched(OrderCreated::class);
+        Event::assertDispatched(
+            OrderCreated::class,
+            function (OrderCreated $event) use ($id) {
+                return $event->orderId === $id;
+            }
+        );
     }
 }
