@@ -11,6 +11,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  adminer:
+    image: adminer
+    container_name: minicommerce_adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "18082:8080"
+    depends_on:
+      - postgres
+
   order-service:
     build:
       context: ./services/order-service

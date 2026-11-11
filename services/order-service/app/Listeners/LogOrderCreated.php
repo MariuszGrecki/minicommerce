@@ -3,10 +3,11 @@
 namespace App\Listeners;
 
 use App\Events\OrderCreated;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
 
-class LogOrderCreated
+class LogOrderCreated implements ShouldQueue
 {
     /**
      * Handle the event.
