@@ -44,5 +44,28 @@ services:
     depends_on:
       - postgres
 
+  queue-worker:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp
+      XDEBUG_MODE: "off"   
+    working_dir: /app
+    volumes:
+      - ./services/order-service:/app
+    command:
+      - php
+      - artisan
+      - queue:work
+      - --sleep=3
+      - --tries=3
+      - --timeout=61
+    restart:
+      unless-stopped
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
