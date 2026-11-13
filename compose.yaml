@@ -10,6 +10,12 @@ services:
       - "127.0.0.1:53456:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d orders"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   adminer:
     image: adminer
@@ -65,7 +71,23 @@ services:
     restart:
       unless-stopped
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: minicommerce
+      RABBITMQ_DEFAULT_PASS: devpassword
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart:
+      unless-stopped
 
 volumes:
   postgres_data:
+  rabbitmq_data:
