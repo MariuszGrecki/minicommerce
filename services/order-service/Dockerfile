@@ -8,7 +8,7 @@ RUN apt-get update \
         libzip-dev \
         libicu-dev\
         unzip \
-    && docker-php-ext-install pdo_pgsql zip intl \
+    && docker-php-ext-install pdo_pgsql zip intl sockets\
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && rm -rf /var/lib/apt/lists/* /tmp/pear
