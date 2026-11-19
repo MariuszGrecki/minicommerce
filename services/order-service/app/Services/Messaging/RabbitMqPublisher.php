@@ -17,16 +17,21 @@ class RabbitMqPublisher
         );
     }
 
-    public function publish(string $routingKey, array $payload): void
-    {
-        $connection = $this->connect();
+public function publish(string $routingKey, array $payload): void
+{
+    $connection = $this->connect();
+    $channel = null;
+
+    try {
         $channel = $connection->channel();
+
+        $channel->confirm_select();
 
         $json = json_encode($payload, JSON_THROW_ON_ERROR);
 
         $message = new AMQPMessage($json, [
             'content_type' => 'application/json',
-            'delivery_mode' => 2
+            'delivery_mode' => 2,
         ]);
 
         $channel->basic_publish(
@@ -35,7 +40,16 @@ class RabbitMqPublisher
             $routingKey
         );
 
-        $channel->close();
-        $connection->close();
+        $channel->wait_for_pending_acks_returns(5.0);
+
+    } finally {
+        if ($channel !== null && $channel->is_open()) {
+            $channel->close();
+        }
+
+        if ($connection->isConnected()) {
+            $connection->close();
+        }
     }
+}
 }
