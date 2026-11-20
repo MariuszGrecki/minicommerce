@@ -7,6 +7,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use App\Services\Messaging\RabbitMqPublisher;
+use Illuminate\Support\Facades\Log;
 
 #[Signature('outbox:publish')]
 
@@ -28,14 +29,23 @@ class PublishOutboxMessages extends Command
         foreach ($messages as $message) {
             $this->info("Unpublished message: {$message->id}");
 
-            $publisher->publish(
-                $message->event_type,
-                $message->payload
-            );
+            try {
+                $publisher->publish(
+                    $message->event_type,
+                    $message->payload
+                );
 
-            $message->update([
-                'published_at' => now()
-            ]);
+                $message->update([
+                    'published_at' => now()
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Publish message failed', [
+                    'message_id' => $message->id,
+                    'error' => $e->getMessage()
+                ]);
+
+                continue;
+            }
         }
 
         return self::SUCCESS;
