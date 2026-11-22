@@ -74,6 +74,27 @@ services:
       postgres:
         condition: service_healthy
 
+  scheduler:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp
+      XDEBUG_MODE: "off"   
+    working_dir: /app
+    volumes:
+      - ./services/order-service:/app
+    command:
+      - php
+      - artisan
+      - schedule:work
+    restart:
+      unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   rabbitmq:
     image: rabbitmq:4-management
     hostname: rabbitmq
