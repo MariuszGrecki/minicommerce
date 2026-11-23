@@ -29,10 +29,17 @@ class PublishOutboxMessages extends Command
         foreach ($messages as $message) {
             $this->info("Unpublished message: {$message->id}");
 
+            $payload = [
+                'event_id' => $message->id,
+                'event_type' => $message->event_type,
+                'version' => 1,
+                'data' => $message->payload
+            ];
+
             try {
                 $publisher->publish(
                     $message->event_type,
-                    $message->payload
+                    $payload
                 );
 
                 $message->update([
