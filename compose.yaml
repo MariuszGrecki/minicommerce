@@ -108,6 +108,15 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     restart:
       unless-stopped
+  
+  warehouse-service:
+    build:
+      context: ./services/warehouse-service
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:33378:8080"
+    restart:
+      unless-stopped
 
 volumes:
   postgres_data:
